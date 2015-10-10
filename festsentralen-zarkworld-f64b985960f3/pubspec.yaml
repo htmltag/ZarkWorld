@@ -1,0 +1,13 @@
+name: ZarkWorld
+version: 0.0.3
+author: Jonathan Søyland-Lier
+description: 3d first person game
+homepage: http://www.htmltag.no
+environment:
+  sdk: '>=1.0.0 <2.0.0'
+dependencies:
+  browser: any
+  three:
+    git:
+      ref: master
+      url: git://github.com/threeDart/three.dart.git

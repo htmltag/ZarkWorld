@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ZW v0.0.3</title>
+<!--<link rel="stylesheet" href="styles/site.css">-->
+<style>
+body {
+	margin: 0;
+	overflow: hidden;
+	background: rgb(136,191,232);
+background: -moz-linear-gradient(top,  rgba(136,191,232,1) 0%, rgba(112,176,224,1) 100%);
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(136,191,232,1)), color-stop(100%,rgba(112,176,224,1)));
+background: -webkit-linear-gradient(top,  rgba(136,191,232,1) 0%,rgba(112,176,224,1) 100%);
+background: -o-linear-gradient(top,  rgba(136,191,232,1) 0%,rgba(112,176,224,1) 100%);
+background: -ms-linear-gradient(top,  rgba(136,191,232,1) 0%,rgba(112,176,224,1) 100%);
+background: linear-gradient(to bottom,  rgba(136,191,232,1) 0%,rgba(112,176,224,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#88bfe8', endColorstr='#70b0e0',GradientType=0 );
+
+}
+
+#crosshair {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin: -16px 0 0 -16px;
+	width: 32px;
+	height: 32px;
+	color: red;
+	font-size: 800;
+	user-select: none;
+	background-image: url("/img/cross.png");
+	background-repeat: no-repeat;
+}
+</style>
+
+</head>
+<body>
+<audio src="/mp3/sound.mp3" type="audio/mpeg"preload="auto" autoplay loop>
+<p>Your browser does not support the <code>audio</code> element </p>
+</audio>
+	<!-- Shaders -->
+	<script type="x-shader/x-vertex" id="bricksvertexshader">
+		
+		// switch on high precision floats
+		#ifdef GL_ES
+		precision highp float;
+		#endif
+		
+		void main()
+		{
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+		}
+		
+	</script>
+
+	<script type="x-shader/x-fragment" id="bricksfragmentshader">
+	
+		#ifdef GL_ES
+precision mediump float;
+#endif
+
+void main( void ) {
+
+
+	vec4 texcolor = vec4(0.5);	
+	float S = sin(time*5.0);
+	int scaleFactor = int((S+2.0)*7.0);
+	
+	vec3 resolution = vec3(600.0, 480.0, 0.0) * (1.0/float(scaleFactor));
+	int fcx = int(gl_FragCoord.x) / scaleFactor;
+	int fcy = int(gl_FragCoord.y) / scaleFactor;
+	vec2 fc = vec2(float(fcx), float(fcy));
+	vec2 uv = ((fc) / (resolution.xy));
+	float grainstrength = 20.0;
+	float x = (uv.x + 4.0) * (uv.y + 4.0) * (0.3*10.0);
+	vec4 graining = vec4(mod((mod(x, 13.0)-1.0) * (mod(x, 123.0) - 1.0), 0.01)-0.005)*grainstrength;
+	
+	
+	texcolor+=graining;
+	
+	texcolor += uv.x + (sin((30.0*(uv.y))+0.2*3.0)*0.004);
+	
+	texcolor *= 0.5;
+	
+	gl_FragColor = texcolor;
+
+}
+	
+	</script>
+	<!-- End Shaders -->
+	<div id="crosshair"></div>
+	<script type="application/dart" src="main.dart"></script>
+	<script data-pub-inline src="packages/browser/dart.js"></script>
+</body>
+</html>
