@@ -36,14 +36,14 @@ class World {
     this._setUpLights();
     this._setUpRoom();
     this._setUpPlayer();
-
     this._addBlock();
-    //this._setUpThrees();
+    this._setUpThrees();
     this._setUpRenderer();
 
     this._axisHelper();
 
-    this.placeBlock = new Block(us.unitsize / 2, 3, materials.blockDirt());
+    //Small block which shows where to place new block
+    this.placeBlock = new Block(us.unitsize / 8, 3, materials.blockDirt());
     this.placeBlock.mesh.visible = false;
 
     this.renderer.domElement.onMouseDown.listen(this.onMouseDown);
@@ -80,8 +80,6 @@ class World {
 */
     RoofGround roofGround = new RoofGround(us.wallLenght, us.wallHeight, materials.ground());
     scene.add(roofGround.mesh);
-    roofGround.mesh.name = "ground";
-    this.addToCollidable(roofGround.mesh);
   }
 
   void _setUpPlayer() {
@@ -188,7 +186,8 @@ class World {
     this.addToCollidable(threeBlock.mesh);
 
     Block threeBlock2 = new Block(us.unitsize, 3, materials.blockWood());
-    threeBlock2.mesh.position.setValues(0.0, 0.0, 0.0);
+    threeBlock2.mesh.position.setValues(
+        threeBlock.size * 8, (threeBlock.size * 2) - (threeBlock.size / 2), threeBlock.size * 4);
     scene.add(threeBlock2.mesh);
     this.addToCollidable(threeBlock2.mesh);
 
@@ -271,7 +270,6 @@ class World {
   }
 
   void addToCollidable(THREE.Object3D obj) {
-    obj.id = this.collidable.collidableMeshList.length;
     this.collidable.collidableMeshList.add(obj);
   }
 

@@ -17,7 +17,6 @@ class Game {
   DateTime prevTime = new DateTime.now();
   Vector3 velocity = new Vector3.zero();
   bool canJump;
-  double jumpHeight;
   THREE.Ray raycaster;
   final double movespeed = 1300.0;
 
@@ -30,17 +29,15 @@ class Game {
 
   Vector3 v3 = new Vector3(0.0, 0.0, 0.0);
   Vector3 vec3 = new Vector3(0.0, 0.0, -100.0);
+  THREE.Mesh lastSelectedMesh;
 
   void init() {
     world = new ZarkWorld.World();
 
     this.playerCollision = new ZarkWorld.CollisionPlayerObstacles();
-
     controls = new ZarkWorld.PointerLockControls(
         this.world.camera, this.world.jacob.personObject3D.position.y);
-    //this.world.jacob.personObject3D.getChildByName('head', true).add(controls.getObject());
     this.controls.enabled = true;
-    this.jumpHeight = this.controls.posY;
     this.world.scene.add(controls.getObject());
 
     moveForward = false;
@@ -135,9 +132,12 @@ class Game {
     document.addEventListener('mousedown', onMouseDown, false);
     document.addEventListener('mouseup', onMouseUp, false);
 
+    //For jumping
     raycaster = new THREE.Ray(new Vector3(0.0, 0.0, 0.0), new Vector3(0.0, -1.0, 0.0), 0, 10);
 
+    //For pointing and selecting blocks
     this.world.scene.add(this.world.placeBlock.mesh);
+    this.lastSelectedMesh = null;
 
     Timer.run(() => logic());
     //new Timer.periodic(const Duration(milliseconds: 16), (Timer time) => logic());
@@ -153,11 +153,11 @@ class Game {
   void logic() {
     if (this.world.pointerlockEnabled) {
       raycaster.origin.setFrom(controls.getObject().position);
-      raycaster.origin.y -= this.jumpHeight;
+      raycaster.origin.y -= this.world.us.unitsize;
 
       //jump
       var intersections = raycaster.intersectObjects(this.world.collidable.collidableMeshList);
-      var isOnObject = intersections.length > 0.0 && intersections.length < this.jumpHeight;
+      var isOnObject = intersections.length > 0.0 && intersections.length < this.controls.posY;
 
       //calculate delta
       DateTime time = new DateTime.now();
@@ -174,36 +174,33 @@ class Game {
         canJump = true;
       }
 
+      //Player collision detection
       List collisions = this.playerCollision.collisionTest2(
           this.world.jacob.personObject3D,
           this.world.collidable.collidableMeshList,
-          this.world.us.unitsize / 4,
+          this.world.us.unitsize / 2,
           moveBackward,
           moveForward,
           moveLeft,
           moveRight);
 
-      for (ZarkWorld.CollisionDirections cd in collisions[1]) {
+      for (ZarkWorld.CollisionDirections cd in collisions[3]) {
         switch (cd) {
           case ZarkWorld.CollisionDirections.backward:
             this.moveBackward = false;
-            velocity.z -= (movespeed * delta) +
-                collisions[0] +
-                this.world.us.unitsize; //(this.world.us.unitsize + 0.1);
+            velocity.z -= movespeed * delta + this.world.us.unitsize + collisions[2];
             break;
           case ZarkWorld.CollisionDirections.forward:
             this.moveForward = false;
-            velocity.z += (movespeed * delta) +
-                collisions[0] +
-                this.world.us.unitsize; //(this.world.us.unitsize + 0.1);
+            velocity.z += movespeed * delta + this.world.us.unitsize + collisions[2];
             break;
           case ZarkWorld.CollisionDirections.left:
             this.moveLeft = false;
-            velocity.x += movespeed * delta + collisions[0] + this.world.us.unitsize;
+            velocity.x += movespeed * delta + this.world.us.unitsize + collisions[0];
             break;
           case ZarkWorld.CollisionDirections.right:
             this.moveRight = false;
-            velocity.x -= movespeed * delta + collisions[0] + this.world.us.unitsize;
+            velocity.x -= movespeed * delta + this.world.us.unitsize + collisions[0];
             break;
         }
       }
@@ -220,13 +217,14 @@ class Game {
 
       this.world.jacob.personObject3D.rotation.setValues(0.0, controls.getObject().rotation.y, 0.0);
       this.world.jacob.personObject3D.position.setFrom(this.controls.getObject().position);
-      if (controls.getObject().position.y < this.jumpHeight) {
+      if (controls.getObject().position.y < this.controls.posY) {
         velocity.y = 0.0;
-        controls.getObject().position.y = this.jumpHeight;
+        controls.getObject().position.y = this.controls.posY;
 
         canJump = true;
       }
 
+      //Point collision test
       v3 = vec3.clone().applyProjection(this.world.camera.matrixWorld).clone();
       this.world.placeBlock.mesh.position.setFrom(v3);
 
@@ -249,11 +247,21 @@ class Game {
 
       if (this.mouse2) {
         if (result[0] && result[2] != null) {
-          print('remove');
           this.world.removeCollidable(result[2]);
           this.world.scene.remove(result[2]);
         }
         this.mouse2 = false;
+      }
+
+      //Making selected block vistible again
+      if (result[2] == null && this.lastSelectedMesh != null) {
+        this.lastSelectedMesh.material.opacity = 1.0;
+      } else if (result[2] != null) {
+        if (this.lastSelectedMesh != null && this.lastSelectedMesh.position != result[2].position) {
+          this.lastSelectedMesh.material.opacity = 1.0;
+        }
+        this.lastSelectedMesh = result[2];
+        this.lastSelectedMesh.material.opacity = 0.8;
       }
 
       prevTime = time;
