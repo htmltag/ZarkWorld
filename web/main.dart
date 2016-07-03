@@ -237,7 +237,7 @@ class Game {
       if (this.mouse0) {
         if (result[0]) {
           ZarkWorld.Block block =
-              new ZarkWorld.Block(this.world.us.unitsize, 3, this.world.materials.rockStone());
+              new ZarkWorld.Block(this.world.us.unitsize, 3, this.world.materials.blockDirt());
           block.mesh.position.setFrom(result[1]);
           this.world.scene.add(block.mesh);
           this.world.addToCollidable(block.mesh);

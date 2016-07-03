@@ -21,14 +21,14 @@ class World {
   Block placeBlock;
 
   Unitsizes us;
-  //PhongObstaclesMaterials materials;
-  BasicObstaclesMaterials materials;
+  PhongObstaclesMaterials materials;
+  //BasicObstaclesMaterials materials;
 
   World() {
     pointerlockEnabled = false;
     this.us = new Unitsizes();
-    //this.materials = new PhongObstaclesMaterials();
-    this.materials = new BasicObstaclesMaterials();
+    this.materials = new PhongObstaclesMaterials();
+    //this.materials = new BasicObstaclesMaterials();
     this.collidable = new Collidable();
     this.collisionPlayerObstacles = new CollisionPlayerObstacles();
     this._createScene();
@@ -64,9 +64,9 @@ class World {
     BasicLight light = new BasicLight();
     BasicLight light2 = new BasicLight();
     scene.add(light.directional);
-    light.directional.position.setValues(-1.0, us.wallHeight - us.unitsize, -1.0);
+    light.directional.position.setValues(-100.0, us.wallHeight - us.unitsize, -10.0);
     scene.add(light2.directional);
-    light2.directional.position.setValues(1.0, us.wallHeight - us.unitsize, 1.0);
+    light2.directional.position.setValues(100.0, us.wallHeight - us.unitsize, 10.0);
     scene.add(light.ambient);
   }
 
@@ -78,7 +78,8 @@ class World {
       this._addToCollidable(wall.mesh.children[i]);
     }
 */
-    RoofGround roofGround = new RoofGround(us.wallLenght, us.wallHeight, materials.ground());
+    //RoofGround roofGround = new RoofGround(us.wallLenght, us.wallHeight, materials.ground());
+    RoofGround roofGround = new RoofGround(2048.00, 2048.00, materials.groundBrick());
     scene.add(roofGround.mesh);
   }
 
@@ -95,22 +96,22 @@ class World {
   }
 
   void _addBlock() {
-    Block block = new Block(us.unitsize, 3, materials.rockStone());
+    Block block = new Block(us.unitsize, 3, materials.blockStone());
     block.mesh.position.setValues(block.size, block.size / 2, block.size * 5);
     scene.add(block.mesh);
     this.addToCollidable(block.mesh);
 
-    Block block2 = new Block(us.unitsize, 3, materials.rockStone());
+    Block block2 = new Block(us.unitsize, 3, materials.blockStone());
     block2.mesh.position.setValues(block.size, block.mesh.position.y * 3, block.size * 5);
     scene.add(block2.mesh);
     this.addToCollidable(block2.mesh);
 
-    Block block3 = new Block(us.unitsize, 3, materials.rockStone());
+    Block block3 = new Block(us.unitsize, 3, materials.blockStone());
     block3.mesh.position.setValues(block.size, block.size / 2, block.size * 4);
     scene.add(block3.mesh);
     this.addToCollidable(block3.mesh);
 
-    Block block4 = new Block(us.unitsize, 3, materials.rockStone());
+    Block block4 = new Block(us.unitsize, 3, materials.blockStone());
     block4.mesh.position.setValues(block.size, block.mesh.position.y * 3, block.size * 4);
     scene.add(block4.mesh);
     this.addToCollidable(block4.mesh);
@@ -120,7 +121,7 @@ class World {
     scene.add(block5.mesh);
     this.addToCollidable(block5.mesh);
 
-    block6 = new Block(us.unitsize, 3, materials.rockStone());
+    block6 = new Block(us.unitsize, 3, materials.blockStone());
     block6.mesh.position.setValues(block.size * 6, block.size / 2, block.size * 6);
     scene.add(block6.mesh);
     this.addToCollidable(block6.mesh);
@@ -128,7 +129,7 @@ class World {
     for (int i = 7; i < 14; i++) {
       for (int j = 1; j < 7; j++) {
         if ((j != 1 && i != 10) || (j != 2 && i != 10)) {
-          Block block9 = new Block(us.unitsize, 3, materials.rockStone());
+          Block block9 = new Block(us.unitsize, 3, materials.blockStone());
           block9.mesh.position
               .setValues(block.size * i, (block.size * j) - (block.size / 2), block.size * 6);
           scene.add(block9.mesh);
@@ -139,7 +140,7 @@ class World {
 
     for (int i = 7; i < 14; i++) {
       for (int j = 1; j < 7; j++) {
-        Block block9 = new Block(us.unitsize, 3, materials.rockStone());
+        Block block9 = new Block(us.unitsize, 3, materials.blockStone());
         block9.mesh.position
             .setValues(block.size * i, (block.size * j) - (block.size / 2), block.size * 13);
         scene.add(block9.mesh);
@@ -149,7 +150,7 @@ class World {
 
     for (int i = 7; i < 14; i++) {
       for (int j = 1; j < 7; j++) {
-        Block block9 = new Block(us.unitsize, 3, materials.rockStone());
+        Block block9 = new Block(us.unitsize, 3, materials.blockStone());
         block9.mesh.position
             .setValues(block.size * 6, (block.size * j) - (block.size / 2), block.size * i);
         scene.add(block9.mesh);
@@ -159,7 +160,7 @@ class World {
 
     for (int i = 7; i < 14; i++) {
       for (int j = 7; j < 14; j++) {
-        Block block9 = new Block(us.unitsize, 3, materials.rockStone());
+        Block block9 = new Block(us.unitsize, 3, materials.blockStone());
         block9.mesh.position
             .setValues(block.size * j, (block.size * 7) - (block.size / 2), block.size * i);
         scene.add(block9.mesh);
@@ -169,7 +170,7 @@ class World {
 
     for (int i = 7; i < 14; i++) {
       for (int j = 1; j < 7; j++) {
-        Block block9 = new Block(us.unitsize, 3, materials.rockStone());
+        Block block9 = new Block(us.unitsize, 3, materials.blockStone());
         block9.mesh.position
             .setValues(block.size * 14, (block.size * j) - (block.size / 2), block.size * i);
         scene.add(block9.mesh);
@@ -203,31 +204,31 @@ class World {
     scene.add(threeBlock4.mesh);
     this.addToCollidable(threeBlock4.mesh);
 
-    Block threeLeaves = new Block(us.unitsize, 3, materials.blockLeaves());
+    Block threeLeaves = new Block(us.unitsize, 3, materials.blockSteel());
     threeLeaves.mesh.position.setValues(threeLeaves.size * 8,
         (threeLeaves.size * 4) - (threeLeaves.size / 2), threeLeaves.size * 5);
     scene.add(threeLeaves.mesh);
     this.addToCollidable(threeLeaves.mesh);
 
-    Block threeLeaves2 = new Block(us.unitsize, 3, materials.blockLeaves());
+    Block threeLeaves2 = new Block(us.unitsize, 3, materials.blockSteel());
     threeLeaves2.mesh.position.setValues(threeLeaves2.size * 8,
         (threeLeaves2.size * 4) - (threeLeaves2.size / 2), threeLeaves2.size * 3);
     scene.add(threeLeaves2.mesh);
     this.addToCollidable(threeLeaves2.mesh);
 
-    Block threeLeaves3 = new Block(us.unitsize, 3, materials.blockLeaves());
+    Block threeLeaves3 = new Block(us.unitsize, 3, materials.blockSteel());
     threeLeaves3.mesh.position.setValues(threeLeaves3.size * 8,
         (threeLeaves3.size * 5) - (threeLeaves3.size / 2), threeLeaves3.size * 4);
     scene.add(threeLeaves3.mesh);
     this.addToCollidable(threeLeaves3.mesh);
 
-    Block threeLeaves4 = new Block(us.unitsize, 3, materials.blockLeaves());
+    Block threeLeaves4 = new Block(us.unitsize, 3, materials.blockSteel());
     threeLeaves4.mesh.position.setValues(threeLeaves4.size * 7,
         (threeLeaves4.size * 4) - (threeLeaves4.size / 2), threeLeaves4.size * 4);
     scene.add(threeLeaves4.mesh);
     this.addToCollidable(threeLeaves4.mesh);
 
-    Block threeLeaves5 = new Block(us.unitsize, 3, materials.blockLeaves());
+    Block threeLeaves5 = new Block(us.unitsize, 3, materials.blockSteel());
     threeLeaves5.mesh.position.setValues(threeLeaves5.size * 9,
         (threeLeaves5.size * 4) - (threeLeaves5.size / 2), threeLeaves5.size * 4);
     scene.add(threeLeaves5.mesh);
